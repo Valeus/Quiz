@@ -90,9 +90,21 @@ public class MainActivity extends FragmentActivity implements QuestionFragment.s
                     tfqs.remove(tfcount);
 
                     if(qt==1) {
+                        if(mcqs.size()>1) {
+                            kid = rando(0, mcqs.size() - 1);
+                            if(kid!=0)
+                                kid--;
+                        }else kid = 0;
+
                         QuestionFragment questionFragment = new QuestionFragment();
                         fragmentTransaction.add(R.id.id_question, questionFragment);
                     }else {
+                        if(tfqs.size()>1) {
+                            tfcount = rando(0, tfqs.size() - 1);
+                            if(tfcount!=0)
+                                tfcount--;
+                        }else tfcount = 0;
+
                         questionTrueAndFalse questionTrueAndFalse = new questionTrueAndFalse();
                         fragmentTransaction.add(R.id.id_question, questionTrueAndFalse);
                     }
