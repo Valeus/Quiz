@@ -27,7 +27,7 @@ public class QuestionFragment extends Fragment {
     TextView question;
     int kid;
     boolean aub=false;
-    scoreKeeping ama;
+    scoreKeeping rey;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -41,14 +41,19 @@ public class QuestionFragment extends Fragment {
         d = v.findViewById(R.id.id_D);
         question = v.findViewById(R.id.id_questionAsked);
 
-        makeQuestion();
+        mcqs = ((MainActivity)this.getActivity()).getMCArrayList();
+
+        kid = ((MainActivity)this.getActivity()).getKid();
+
+
+        /*makeQuestion();
 
         if(mcqs.size()>1) {
             kid = rando(0, mcqs.size() - 1);
             if(kid!=0)
                 kid--;
         }else kid = 0;
-        question.setText(mcqs.get(kid).getQ());
+        question.setText(mcqs.get(kid).getQ());*/
         a.setText(mcqs.get(kid).getA1());
         b.setText(mcqs.get(kid).getA2());
         c.setText(mcqs.get(kid).getA3());
@@ -61,34 +66,34 @@ public class QuestionFragment extends Fragment {
                 if(a.isChecked()){
                     if(a.getText().equals(mcqs.get(kid).getS())){
                         aub=true;
-                        ama.score(aub);
+                        rey.score(aub);
                     }else aub=false;
                 }
                 if(b.isChecked()) {
                     if(b.getText().equals(mcqs.get(kid).getS())) {
                         aub = true;
-                        ama.score(aub);
+                        rey.score(aub);
                     }else aub=false;
                 }
                 if(c.isChecked()){
                     if(c.getText().equals(mcqs.get(kid).getS())){
                         aub=true;
-                        ama.score(aub);
+                        rey.score(aub);
                     }else aub=false;
                 }
                 if(d.isChecked()){
                     if(d.getText().equals(mcqs.get(kid).getS())){
                         aub=true;
-                        ama.score(aub);
+                        rey.score(aub);
                     }else aub=false;
                 }
 
-                mcqs.remove(kid);
+                //mcqs.remove(kid);
 
             }
         });
         aub=false;
-        mcqs.remove(kid);
+       // mcqs.remove(kid);
 
         Log.d("COUNT",""+mcqs.size());
 
@@ -100,7 +105,7 @@ public class QuestionFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        ama = (scoreKeeping)context;
+        rey = (scoreKeeping)context;
     }
 
     public interface scoreKeeping{
