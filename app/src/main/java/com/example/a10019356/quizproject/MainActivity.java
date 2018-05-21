@@ -1,5 +1,7 @@
 package com.example.a10019356.quizproject;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -8,9 +10,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-public class MainActivity extends FragmentActivity implements QuestionFragment.scoreKeeping{
+public class MainActivity extends FragmentActivity{
 
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
@@ -24,7 +33,6 @@ public class MainActivity extends FragmentActivity implements QuestionFragment.s
     int score=0;
     int qt;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +45,10 @@ public class MainActivity extends FragmentActivity implements QuestionFragment.s
 
         qt = (int)(Math.random()*2)+1;
 
+        if (savedInstanceState != null) {
+            kid=
+
+        }
         if(quest<10) {
             start.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -45,30 +57,33 @@ public class MainActivity extends FragmentActivity implements QuestionFragment.s
                     welcome.setVisibility(view.INVISIBLE);
                     next.setVisibility(view.VISIBLE);
                     start.setVisibility(view.INVISIBLE);
+                    next.setClickable(true);
                     start.setClickable(false);
 
 
                     fragmentManager = getSupportFragmentManager();
                     fragmentTransaction = fragmentManager.beginTransaction();
 
-                    if(qt==1) {
-                        makeMCQuestion();
+                    makeMCQuestion();
 
-                        if(mcqs.size()>1) {
-                            kid = rando(0, mcqs.size() - 1);
-                            if(kid!=0)
-                                kid--;
-                        }else kid = 0;
+                    if(mcqs.size()>1) {
+                        kid = rando(0, mcqs.size() - 1);
+                        if(kid!=0)
+                            kid--;
+                    }else kid = 0;
+
+                    makeTFQuestion();
+
+                    if(tfqs.size()>1) {
+                        tfcount = rando(0, tfqs.size() - 1);
+                        if(tfcount!=0)
+                            tfcount--;
+                    }else tfcount = 0;
+
+                    if(qt==1) {
                         QuestionFragment questionFragment = new QuestionFragment();
                         fragmentTransaction.add(R.id.id_question, questionFragment);
                     }else {
-                        makeTFQuestion();
-
-                        if(tfqs.size()>1) {
-                            tfcount = rando(0, tfqs.size() - 1);
-                            if(tfcount!=0)
-                                tfcount--;
-                        }else tfcount = 0;
                         questionTrueAndFalse questionTrueAndFalse = new questionTrueAndFalse();
                         fragmentTransaction.add(R.id.id_question, questionTrueAndFalse);
                     }
@@ -89,22 +104,22 @@ public class MainActivity extends FragmentActivity implements QuestionFragment.s
                     mcqs.remove(kid);
                     tfqs.remove(tfcount);
 
-                    if(qt==1) {
-                        if(mcqs.size()>1) {
-                            kid = rando(0, mcqs.size() - 1);
-                            if(kid!=0)
-                                kid--;
-                        }else kid = 0;
+                    if(mcqs.size()>1) {
+                        kid = rando(0, mcqs.size() - 1);
+                        if(kid!=0)
+                            kid--;
+                    }else kid = 0;
 
+                    if(tfqs.size()>1) {
+                        tfcount = rando(0, tfqs.size() - 1);
+                        if(tfcount!=0)
+                            tfcount--;
+                    }else tfcount = 0;
+
+                    if(qt==1) {
                         QuestionFragment questionFragment = new QuestionFragment();
                         fragmentTransaction.add(R.id.id_question, questionFragment);
                     }else {
-                        if(tfqs.size()>1) {
-                            tfcount = rando(0, tfqs.size() - 1);
-                            if(tfcount!=0)
-                                tfcount--;
-                        }else tfcount = 0;
-
                         questionTrueAndFalse questionTrueAndFalse = new questionTrueAndFalse();
                         fragmentTransaction.add(R.id.id_question, questionTrueAndFalse);
                     }
@@ -149,13 +164,15 @@ public class MainActivity extends FragmentActivity implements QuestionFragment.s
 
     }
 
-    @Override
-    public void score(boolean cor) {
-        if(cor)
-            score++;
-
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("kid", kid);
+        outState.putInt("tfcount", tfcount);
+        outState.putInt("quest", quest);
+        outState.putInt("score", score);
+        outState.putParcelableArrayList("mcqs", mcqs);
+        outState.putParcelableArrayList("tfqs", tfqs);
+        super.onSaveInstanceState(outState);
     }
-
 
     public int getKid(){
         return kid;
@@ -210,5 +227,7 @@ public class MainActivity extends FragmentActivity implements QuestionFragment.s
         tfqs.add(new TrueAndFalse("True or False: A duck's quack doesn't echo. ","True","False","False"));
 
     }
+
+
 
 }

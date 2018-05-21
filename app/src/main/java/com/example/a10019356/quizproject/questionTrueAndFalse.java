@@ -22,8 +22,7 @@ public class questionTrueAndFalse extends Fragment {
     RadioButton falseOption;
     ArrayList<TrueAndFalse> tfqs = new ArrayList<>();
     int tfcount;
-    boolean aub=false;
-    scoreKeeping rey;
+    int score;
 
 
     @Override
@@ -38,6 +37,7 @@ public class questionTrueAndFalse extends Fragment {
 
         tfqs = ((MainActivity)this.getActivity()).getTFArrayList();
         tfcount = ((MainActivity)this.getActivity()).getTfcount();
+        score = ((MainActivity)this.getActivity()).getScore();
 
 
         questionThatIsAsked.setText(tfqs.get(tfcount).getQ());
@@ -49,34 +49,20 @@ public class questionTrueAndFalse extends Fragment {
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
                 if(trueOption.isChecked()){
                     if(trueOption.getText().equals(tfqs.get(tfcount).getS())){
-                        aub=true;
-                        rey.score(aub);
-                    }else aub=false;
+                        score++;
+                    }
                 }
                 if(falseOption.isChecked()){
                     if(falseOption.getText().equals(tfqs.get(tfcount).getS())){
-                        aub=true;
-                        rey.score(aub);
-                    }else aub=false;
+                        score++;
+                    }
                 }
 
             }
         });
-        aub=false;
-
 
 
         return v;
-    }
-
-    public interface scoreKeeping{
-        public void score(boolean cor);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        rey = (scoreKeeping)context;
     }
 
 

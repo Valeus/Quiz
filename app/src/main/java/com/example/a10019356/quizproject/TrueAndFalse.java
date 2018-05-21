@@ -1,6 +1,9 @@
 package com.example.a10019356.quizproject;
 
-public class TrueAndFalse {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class TrueAndFalse implements Parcelable{
 
     String q,t,f,s;
 
@@ -25,5 +28,15 @@ public class TrueAndFalse {
 
     public String getT() {
         return t;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }

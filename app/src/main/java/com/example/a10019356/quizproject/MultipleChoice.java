@@ -1,6 +1,9 @@
 package com.example.a10019356.quizproject;
 
-public class MultipleChoice {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class MultipleChoice implements Parcelable {
 
     String q,a1,a2,a3,a4,s;
 
@@ -35,5 +38,15 @@ public class MultipleChoice {
 
     public String getS() {
         return s;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
 }

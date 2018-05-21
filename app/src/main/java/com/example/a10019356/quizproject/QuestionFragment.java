@@ -26,8 +26,7 @@ public class QuestionFragment extends Fragment {
     RadioButton d;
     TextView question;
     int kid;
-    boolean aub=false;
-    scoreKeeping rey;
+    int score;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,92 +43,47 @@ public class QuestionFragment extends Fragment {
         mcqs = ((MainActivity)this.getActivity()).getMCArrayList();
 
         kid = ((MainActivity)this.getActivity()).getKid();
+        score = ((MainActivity)this.getActivity()).getScore();
 
-
-        /*makeQuestion();
-
-        if(mcqs.size()>1) {
-            kid = rando(0, mcqs.size() - 1);
-            if(kid!=0)
-                kid--;
-        }else kid = 0;
-        question.setText(mcqs.get(kid).getQ());*/
+        question.setText(mcqs.get(kid).getQ());
         a.setText(mcqs.get(kid).getA1());
         b.setText(mcqs.get(kid).getA2());
         c.setText(mcqs.get(kid).getA3());
         d.setText(mcqs.get(kid).getA4());
-        Log.d("RAWR",""+mcqs.get(kid).getQ());
 
         answers.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
                 if(a.isChecked()){
                     if(a.getText().equals(mcqs.get(kid).getS())){
-                        aub=true;
-                        rey.score(aub);
-                    }else aub=false;
+                        score++;
+                    }
                 }
                 if(b.isChecked()) {
                     if(b.getText().equals(mcqs.get(kid).getS())) {
-                        aub = true;
-                        rey.score(aub);
-                    }else aub=false;
+                        score++;
+                    }
                 }
                 if(c.isChecked()){
                     if(c.getText().equals(mcqs.get(kid).getS())){
-                        aub=true;
-                        rey.score(aub);
-                    }else aub=false;
+                        score++;
+                    }
                 }
                 if(d.isChecked()){
                     if(d.getText().equals(mcqs.get(kid).getS())){
-                        aub=true;
-                        rey.score(aub);
-                    }else aub=false;
+                        score++;
+                    }
                 }
 
-                //mcqs.remove(kid);
+
 
             }
         });
-        aub=false;
-       // mcqs.remove(kid);
-
-        Log.d("COUNT",""+mcqs.size());
-
-
 
         return v;
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        rey = (scoreKeeping)context;
-    }
 
-    public interface scoreKeeping{
-        public void score(boolean cor);
-    }
-
-    public int rando(int start, int end){
-        return (int)(Math.random()*((end-start)+1))+start;
-    }
-
-    public void makeQuestion(){
-
-        mcqs.add(new MultipleChoice("Who won WWII?","Germany","Africa","Antarctica","Allied Powers","Allied Powers"));
-        mcqs.add(new MultipleChoice("What is the cube root of 125?","7","5","2.5","3","5"));
-        mcqs.add(new MultipleChoice("What is the largest organ in the human body?","Heart","Stomach","Skin","Eyes","Skin"));
-        mcqs.add(new MultipleChoice("What is the end of a shoelace called?","An aglet","A lace-end","A knot","The tip","An aglet"));
-        mcqs.add(new MultipleChoice("What is Chicago?","Continent","City","State","City on a hill","City"));
-        mcqs.add(new MultipleChoice("How many notes are in an octave?","7","12","8","9","8"));
-        mcqs.add(new MultipleChoice("What is the chemical formula for water?","WAT","C4W","C6H12O6","H2O","H2O"));
-        mcqs.add(new MultipleChoice("What line divides North and South Korea?","Berlin Wall","The Great Wall","The Mexican Border Wall","The 38th Parallel","The 38th Parallel"));
-        mcqs.add(new MultipleChoice("What is a derivative?","Slope of a tangent line","Factored form of an equation","When you solve a problem","When you derive something","Slope of a tangent line"));
-        mcqs.add(new MultipleChoice("How long can someone survive without water?","3 days","3 years","3 weeks","3 centuries","3 days"));
-
-    }
 
 
 }
