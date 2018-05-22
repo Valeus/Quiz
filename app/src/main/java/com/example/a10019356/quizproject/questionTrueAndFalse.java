@@ -23,6 +23,7 @@ public class questionTrueAndFalse extends Fragment {
     ArrayList<TrueAndFalse> tfqs = new ArrayList<>();
     int tfcount;
     int score;
+    int aub;
 
 
     @Override
@@ -38,31 +39,33 @@ public class questionTrueAndFalse extends Fragment {
         tfqs = ((MainActivity)this.getActivity()).getTFArrayList();
         tfcount = ((MainActivity)this.getActivity()).getTfcount();
         score = ((MainActivity)this.getActivity()).getScore();
+        aub = ((MainActivity)this.getActivity()).getQuest();
 
+        if(aub!=10) {
+            questionThatIsAsked.setText(tfqs.get(tfcount).getQ());
+            trueOption.setText(tfqs.get(tfcount).getT());
+            falseOption.setText(tfqs.get(tfcount).getF());
 
-        questionThatIsAsked.setText(tfqs.get(tfcount).getQ());
-        trueOption.setText(tfqs.get(tfcount).getT());
-        falseOption.setText(tfqs.get(tfcount).getF());
-
-        options.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                if(trueOption.isChecked()){
-                    if(trueOption.getText().equals(tfqs.get(tfcount).getS())){
-                        score++;
+            options.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                    if (trueOption.isChecked()) {
+                        if (trueOption.getText().equals(tfqs.get(tfcount).getS())) {
+                            score++;
+                        }
                     }
-                }
-                if(falseOption.isChecked()){
-                    if(falseOption.getText().equals(tfqs.get(tfcount).getS())){
-                        score++;
+                    if (falseOption.isChecked()) {
+                        if (falseOption.getText().equals(tfqs.get(tfcount).getS())) {
+                            score++;
+                        }
                     }
+
                 }
+            });
 
-            }
-        });
+        }
 
-
-        return v;
+            return v;
     }
 
 

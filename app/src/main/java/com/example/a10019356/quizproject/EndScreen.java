@@ -20,6 +20,7 @@ public class EndScreen extends Fragment {
         View v =inflater.inflate(R.layout.fragment_end_screen, container, false);
 
         score = ((MainActivity)this.getActivity()).getScore();
+
         message.setText("You got a "+score+"/10.");
 
         return v;

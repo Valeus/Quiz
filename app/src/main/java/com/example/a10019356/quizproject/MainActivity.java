@@ -19,6 +19,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import static android.view.View.INVISIBLE;
+import static android.view.View.VISIBLE;
+
 public class MainActivity extends FragmentActivity{
 
     FragmentTransaction fragmentTransaction;
@@ -29,12 +32,12 @@ public class MainActivity extends FragmentActivity{
     ArrayList<TrueAndFalse> tfqs = new ArrayList<>();
     int kid;
     int tfcount;
-    int quest = 0;
+    int quest = 9;
     int score=0;
     int qt;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -46,17 +49,22 @@ public class MainActivity extends FragmentActivity{
         qt = (int)(Math.random()*2)+1;
 
         if (savedInstanceState != null) {
-            kid=
-
+            kid=savedInstanceState.getInt("kid");
+            tfcount=savedInstanceState.getInt("tfcount");
+            quest=savedInstanceState.getInt("quest");
+            score=savedInstanceState.getInt("score");
+            mcqs=savedInstanceState.getParcelableArrayList("mcqs");
+            tfqs=savedInstanceState.getParcelableArrayList("tfqs");
         }
+
         if(quest<10) {
             start.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
-                    welcome.setVisibility(view.INVISIBLE);
-                    next.setVisibility(view.VISIBLE);
-                    start.setVisibility(view.INVISIBLE);
+                    welcome.setVisibility(INVISIBLE);
+                    next.setVisibility(VISIBLE);
+                    start.setVisibility(INVISIBLE);
                     next.setClickable(true);
                     start.setClickable(false);
 
@@ -66,72 +74,33 @@ public class MainActivity extends FragmentActivity{
 
                     makeMCQuestion();
 
-                    if(mcqs.size()>1) {
-                        kid = rando(0, mcqs.size() - 1);
-                        if(kid!=0)
-                            kid--;
-                    }else kid = 0;
+                    kid = rando(0, mcqs.size() - 1);
+
 
                     makeTFQuestion();
 
-                    if(tfqs.size()>1) {
-                        tfcount = rando(0, tfqs.size() - 1);
-                        if(tfcount!=0)
-                            tfcount--;
-                    }else tfcount = 0;
+                    tfcount = rando(0, tfqs.size() - 1);
 
-                    if(qt==1) {
+
+                    if (qt == 1) {
                         QuestionFragment questionFragment = new QuestionFragment();
                         fragmentTransaction.add(R.id.id_question, questionFragment);
-                    }else {
+                        fragmentTransaction.commit();
+                        quest++;
+                    } else {
                         questionTrueAndFalse questionTrueAndFalse = new questionTrueAndFalse();
                         fragmentTransaction.add(R.id.id_question, questionTrueAndFalse);
+                        fragmentTransaction.commit();
+                        quest++;
                     }
 
-                    fragmentTransaction.commit();
 
-                    quest++;
-
-                }
-            });
-
-
-            next.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    qt = (int)(Math.random()*2)+1;
-                    mcqs.remove(kid);
-                    tfqs.remove(tfcount);
-
-                    if(mcqs.size()>1) {
-                        kid = rando(0, mcqs.size() - 1);
-                        if(kid!=0)
-                            kid--;
-                    }else kid = 0;
-
-                    if(tfqs.size()>1) {
-                        tfcount = rando(0, tfqs.size() - 1);
-                        if(tfcount!=0)
-                            tfcount--;
-                    }else tfcount = 0;
-
-                    if(qt==1) {
-                        QuestionFragment questionFragment = new QuestionFragment();
-                        fragmentTransaction.add(R.id.id_question, questionFragment);
-                    }else {
-                        questionTrueAndFalse questionTrueAndFalse = new questionTrueAndFalse();
-                        fragmentTransaction.add(R.id.id_question, questionTrueAndFalse);
-                    }
-
-                    fragmentTransaction.commit();
-                    quest++;
                 }
             });
         }else if(quest==10){
 
-            next.setVisibility(View.INVISIBLE);
-            start.setVisibility(View.VISIBLE);
+            next.setVisibility(INVISIBLE);
+            start.setVisibility(VISIBLE);
             start.setText("Restart");
 
             start.setOnClickListener(new View.OnClickListener() {
@@ -139,6 +108,14 @@ public class MainActivity extends FragmentActivity{
                 public void onClick(View v) {
 
                     quest=0;
+
+                    fragmentManager = getSupportFragmentManager();
+                    fragmentTransaction = fragmentManager.beginTransaction();
+
+                    fragmentTransaction.remove(fragmentManager.findFragmentById(R.id.id_question)).commit();
+
+                    EndScreen endScreen = new EndScreen();
+                    fragmentTransaction.replace(R.id.id_question, endScreen);
 
                     for(int i = mcqs.size()-1; i>0; i--){
                         mcqs.remove(i);
@@ -152,6 +129,45 @@ public class MainActivity extends FragmentActivity{
                 }
             });
         }
+
+
+            next.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    fragmentManager = getSupportFragmentManager();
+                    fragmentTransaction = fragmentManager.beginTransaction();
+
+                    fragmentTransaction.remove(fragmentManager.findFragmentById(R.id.id_question)).commit();
+
+                    if(quest==10){
+                        EndScreen endScreen = new EndScreen();
+                        fragmentTransaction.replace(R.id.id_question, endScreen);
+                    }
+
+                    qt = (int) (Math.random() * 2) + 1;
+
+                    mcqs.remove(kid);
+                    tfqs.remove(tfcount);
+
+                    kid = rando(0, mcqs.size() - 1);
+                    tfcount = rando(0, tfqs.size() - 1);
+
+
+                    if (qt == 1) {
+                        QuestionFragment questionFragment = new QuestionFragment();
+                        fragmentTransaction.replace(R.id.id_question, questionFragment);
+                        quest++;
+                    } else {
+                        questionTrueAndFalse questionTrueAndFalse = new questionTrueAndFalse();
+                        fragmentTransaction.replace(R.id.id_question, questionTrueAndFalse);
+                        quest++;
+                    }
+
+                }
+            });
+
+
 
 
         exit.setOnClickListener(new View.OnClickListener() {
@@ -184,6 +200,10 @@ public class MainActivity extends FragmentActivity{
 
     public int getScore(){
         return score;
+    }
+
+    public int getQuest(){
+        return quest;
     }
 
     public ArrayList getMCArrayList(){
