@@ -1,28 +1,24 @@
 package com.example.a10019356.quizproject;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.support.annotation.IdRes;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 
-public class MainActivity extends FragmentActivity{
+public class MainActivity extends FragmentActivity implements questionTrueAndFalse.ReceiveTFRadioGroup,
+        QuestionFragment.ReceiveMVRadioGroup{
 
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
@@ -30,11 +26,28 @@ public class MainActivity extends FragmentActivity{
     TextView welcome;
     ArrayList<MultipleChoice> mcqs = new ArrayList<>();
     ArrayList<TrueAndFalse> tfqs = new ArrayList<>();
-    int kid;
-    int tfcount;
-    int quest = 9;
+    int kid=0;
+    int tfcount=0;
+    int quest = 0;
     int score=0;
     int qt;
+
+    RadioGroup tfOptions;
+    RadioGroup mcAnswers;
+    RadioGroup options;
+    RadioGroup answers;
+    RadioButton trueOption;
+    RadioButton falseOption;
+    RadioButton tru;
+    RadioButton fals;
+    RadioButton a;
+    RadioButton b;
+    RadioButton c;
+    RadioButton d;
+    RadioButton aa;
+    RadioButton bb;
+    RadioButton cc;
+    RadioButton dd;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -45,6 +58,14 @@ public class MainActivity extends FragmentActivity{
         start = findViewById(R.id.id_start);
         next = findViewById(R.id.id_next);
         exit = findViewById(R.id.id_exit);
+        options = getTfOptions();
+        tru = getTrueOption();
+        fals = getFalseOption();
+        answers = getMcAnswers();
+        aa = getA();
+        bb = getB();
+        cc = getC();
+        dd = getD();
 
         qt = (int)(Math.random()*2)+1;
 
@@ -57,58 +78,71 @@ public class MainActivity extends FragmentActivity{
             tfqs=savedInstanceState.getParcelableArrayList("tfqs");
         }
 
-        if(quest<10) {
-            start.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+        start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-                    welcome.setVisibility(INVISIBLE);
-                    next.setVisibility(VISIBLE);
-                    start.setVisibility(INVISIBLE);
-                    next.setClickable(true);
-                    start.setClickable(false);
+                welcome.setVisibility(INVISIBLE);
+                next.setVisibility(VISIBLE);
+                start.setVisibility(INVISIBLE);
+                next.setClickable(true);
+                start.setClickable(false);
 
-
-                    fragmentManager = getSupportFragmentManager();
-                    fragmentTransaction = fragmentManager.beginTransaction();
-
-                    makeMCQuestion();
-
-                    kid = rando(0, mcqs.size() - 1);
+                start.setText("Start");
 
 
-                    makeTFQuestion();
+                fragmentManager = getSupportFragmentManager();
+                fragmentTransaction = fragmentManager.beginTransaction();
 
-                    tfcount = rando(0, tfqs.size() - 1);
+                makeMCQuestion();
+                makeTFQuestion();
 
-
-                    if (qt == 1) {
-                        QuestionFragment questionFragment = new QuestionFragment();
-                        fragmentTransaction.add(R.id.id_question, questionFragment);
-                        fragmentTransaction.commit();
-                        quest++;
-                    } else {
-                        questionTrueAndFalse questionTrueAndFalse = new questionTrueAndFalse();
-                        fragmentTransaction.add(R.id.id_question, questionTrueAndFalse);
-                        fragmentTransaction.commit();
-                        quest++;
-                    }
-
-
+                if (qt == 1) {
+                    QuestionFragment questionFragment = new QuestionFragment();
+                    fragmentTransaction.add(R.id.id_question, questionFragment);
+                    fragmentTransaction.commit();
+                    kid++;
+                    quest++;
+                } else {
+                    questionTrueAndFalse questionTrueAndFalse = new questionTrueAndFalse();
+                    fragmentTransaction.add(R.id.id_question, questionTrueAndFalse);
+                    fragmentTransaction.commit();
+                    tfcount++;
+                    quest++;
                 }
-            });
-        }else if(quest==10){
+                Log.d("questions",""+quest);
 
-            next.setVisibility(INVISIBLE);
-            start.setVisibility(VISIBLE);
-            start.setText("Restart");
 
-            start.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            }
+        });
 
-                    quest=0;
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                fragmentManager = getSupportFragmentManager();
+                fragmentTransaction = fragmentManager.beginTransaction();
+
+                fragmentTransaction.remove(fragmentManager.findFragmentById(R.id.id_question)).commit();
+
+                qt = (int) (Math.random() * 2) + 1;
+
+
+                if (qt == 1) {
+                    QuestionFragment questionFragment = new QuestionFragment();
+                    fragmentTransaction.replace(R.id.id_question, questionFragment);
+                    kid++;
+                    quest++;
+                } else {
+                    questionTrueAndFalse questionTrueAndFalse = new questionTrueAndFalse();
+                    fragmentTransaction.replace(R.id.id_question, questionTrueAndFalse);
+                    tfcount++;
+                    quest++;
+                }
+
+                if(quest>=9) {
+
+                    next.setClickable(false);
                     fragmentManager = getSupportFragmentManager();
                     fragmentTransaction = fragmentManager.beginTransaction();
 
@@ -116,57 +150,82 @@ public class MainActivity extends FragmentActivity{
 
                     EndScreen endScreen = new EndScreen();
                     fragmentTransaction.replace(R.id.id_question, endScreen);
+                    start.setText("Restart");
 
-                    for(int i = mcqs.size()-1; i>0; i--){
-                        mcqs.remove(i);
-                    }
-                    for(int i = tfqs.size()-1; i>0; i--){
-                        tfqs.remove(i);
-                    }
+                    start.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                    score=0;
+                            quest = 0;
 
+                            fragmentManager = getSupportFragmentManager();
+                            fragmentTransaction = fragmentManager.beginTransaction();
+
+                            fragmentTransaction.remove(fragmentManager.findFragmentById(R.id.id_question)).commit();
+
+                            EndScreen endScreen = new EndScreen();
+                            fragmentTransaction.replace(R.id.id_question, endScreen);
+
+                            for (int i = mcqs.size() - 1; i > 0; i--) {
+                                mcqs.remove(i);
+                            }
+                            for (int i = tfqs.size() - 1; i > 0; i--) {
+                                tfqs.remove(i);
+                            }
+
+                            kid=0;
+                            tfcount=0;
+                            score = 0;
+
+                            next.setVisibility(VISIBLE);
+                            start.setVisibility(INVISIBLE);
+                            next.setClickable(true);
+                            start.setClickable(false);
+
+                            fragmentManager = getSupportFragmentManager();
+                            fragmentTransaction = fragmentManager.beginTransaction();
+
+                            makeMCQuestion();
+                            makeTFQuestion();
+
+                            if (qt == 1) {
+                                QuestionFragment questionFragment = new QuestionFragment();
+                                fragmentTransaction.replace(R.id.id_question, questionFragment);
+                                kid++;
+                                quest++;
+                            } else {
+                                questionTrueAndFalse questionTrueAndFalse = new questionTrueAndFalse();
+                                fragmentTransaction.replace(R.id.id_question, questionTrueAndFalse);
+                                tfcount++;
+                                quest++;
+                            }
+
+
+                        }
+                    });
+
+                    next.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            fragmentManager = getSupportFragmentManager();
+                            fragmentTransaction = fragmentManager.beginTransaction();
+
+                            EndScreen endScreen = new EndScreen();
+                            fragmentTransaction.replace(R.id.id_question, endScreen);
+
+                            next.setVisibility(INVISIBLE);
+                            start.setVisibility(VISIBLE);
+
+
+                        }
+                    });
                 }
-            });
-        }
 
+                Log.d("questions",""+quest);
 
-            next.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    fragmentManager = getSupportFragmentManager();
-                    fragmentTransaction = fragmentManager.beginTransaction();
-
-                    fragmentTransaction.remove(fragmentManager.findFragmentById(R.id.id_question)).commit();
-
-                    if(quest==10){
-                        EndScreen endScreen = new EndScreen();
-                        fragmentTransaction.replace(R.id.id_question, endScreen);
-                    }
-
-                    qt = (int) (Math.random() * 2) + 1;
-
-                    mcqs.remove(kid);
-                    tfqs.remove(tfcount);
-
-                    kid = rando(0, mcqs.size() - 1);
-                    tfcount = rando(0, tfqs.size() - 1);
-
-
-                    if (qt == 1) {
-                        QuestionFragment questionFragment = new QuestionFragment();
-                        fragmentTransaction.replace(R.id.id_question, questionFragment);
-                        quest++;
-                    } else {
-                        questionTrueAndFalse questionTrueAndFalse = new questionTrueAndFalse();
-                        fragmentTransaction.replace(R.id.id_question, questionTrueAndFalse);
-                        quest++;
-                    }
-
-                }
-            });
-
+            }
+        });
 
 
 
@@ -177,6 +236,63 @@ public class MainActivity extends FragmentActivity{
                 System.exit(1);
             }
         });
+
+        try{
+            options.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                    if (tru.isChecked()) {
+                        if (tru.getText().equals(tfqs.get(tfcount).getS())) {
+                            score++;
+                        }
+                    }
+                    if (fals.isChecked()) {
+                        if (fals.getText().equals(tfqs.get(tfcount).getS())) {
+                            score++;
+                        }
+                    }
+
+                }
+            });
+
+            answers.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                    if (aa.isChecked()) {
+                        if (aa.getText().equals(mcqs.get(kid).getS())) {
+                            score++;
+                        }
+                    }
+                    if (bb.isChecked()) {
+                        if (bb.getText().equals(mcqs.get(kid).getS())) {
+                            score++;
+                        }
+                    }
+                    if (cc.isChecked()) {
+                        if (cc.getText().equals(mcqs.get(kid).getS())) {
+                            score++;
+                        }
+                    }
+                    if (dd.isChecked()) {
+                        if (dd.getText().equals(mcqs.get(kid).getS())) {
+                            score++;
+                        }
+                    }
+
+
+                }
+            });
+        }catch (NullPointerException e){
+            options = getTfOptions();
+            tru = getTrueOption();
+            fals = getFalseOption();
+            answers = getMcAnswers();
+            aa = getA();
+            bb = getB();
+            cc = getC();
+            dd = getD();
+           Log.d("ERROR", ""+e);
+        }
 
     }
 
@@ -214,10 +330,6 @@ public class MainActivity extends FragmentActivity{
         return tfqs;
     }
 
-    public int rando(int start, int end){
-        return (int)(Math.random()*((end-start)+1))+start;
-    }
-
     public void makeMCQuestion(){
 
         mcqs.add(new MultipleChoice("Who won WWII?","Germany","Africa","Antarctica","Allied Powers","Allied Powers"));
@@ -248,6 +360,75 @@ public class MainActivity extends FragmentActivity{
 
     }
 
+    public RadioGroup getTfOptions() {
+        return tfOptions;
+    }
 
+    public RadioButton getTrueOption(){
+        return trueOption;
+    }
 
+    public RadioButton getFalseOption(){
+        return falseOption;
+    }
+
+    public RadioGroup getMcAnswers(){
+        return mcAnswers;
+    }
+
+    public RadioButton getA(){
+        return a;
+    }
+
+    public RadioButton getB(){
+        return b;
+    }
+
+    public RadioButton getC(){
+        return c;
+    }
+
+    public RadioButton getD(){
+        return d;
+    }
+
+    @Override
+    public void receiveQTF(RadioGroup radioGroup) {
+        tfOptions = radioGroup;
+    }
+
+    @Override
+    public void receiveT(RadioButton radioButton) {
+        trueOption = radioButton;
+    }
+
+    @Override
+    public void receiveF(RadioButton radioButton) {
+        falseOption = radioButton;
+    }
+
+    @Override
+    public void receiveMCQ(RadioGroup radioGroup) {
+        mcAnswers = radioGroup;
+    }
+
+    @Override
+    public void receiveMCA(RadioButton radioButton) {
+        a = radioButton;
+    }
+
+    @Override
+    public void receiveMCB(RadioButton radioButton) {
+        b = radioButton;
+    }
+
+    @Override
+    public void receiveMCC(RadioButton radioButton) {
+        c = radioButton;
+    }
+
+    @Override
+    public void receiveMCD(RadioButton radioButton) {
+        d = radioButton;
+    }
 }

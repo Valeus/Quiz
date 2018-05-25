@@ -22,7 +22,6 @@ public class questionTrueAndFalse extends Fragment {
     RadioButton falseOption;
     ArrayList<TrueAndFalse> tfqs = new ArrayList<>();
     int tfcount;
-    int score;
     int aub;
 
 
@@ -38,35 +37,41 @@ public class questionTrueAndFalse extends Fragment {
 
         tfqs = ((MainActivity)this.getActivity()).getTFArrayList();
         tfcount = ((MainActivity)this.getActivity()).getTfcount();
-        score = ((MainActivity)this.getActivity()).getScore();
-        aub = ((MainActivity)this.getActivity()).getQuest();
+        aub = ((MainActivity)this.getActivity()).getScore();
 
-        if(aub!=10) {
-            questionThatIsAsked.setText(tfqs.get(tfcount).getQ());
-            trueOption.setText(tfqs.get(tfcount).getT());
-            falseOption.setText(tfqs.get(tfcount).getF());
+        questionThatIsAsked.setText(tfqs.get(tfcount).getQ());
+        trueOption.setText(tfqs.get(tfcount).getT());
+        falseOption.setText(tfqs.get(tfcount).getF());
 
-            options.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                    if (trueOption.isChecked()) {
-                        if (trueOption.getText().equals(tfqs.get(tfcount).getS())) {
-                            score++;
-                        }
+        options.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                if (trueOption.isChecked()) {
+                    if (trueOption.getText().equals(tfqs.get(tfcount).getS())) {
+                        addScore(aub);
                     }
-                    if (falseOption.isChecked()) {
-                        if (falseOption.getText().equals(tfqs.get(tfcount).getS())) {
-                            score++;
-                        }
-                    }
-
                 }
-            });
+                if (falseOption.isChecked()) {
+                    if (falseOption.getText().equals(tfqs.get(tfcount).getS())) {
+                        addScore(aub);
+                    }
+                }
 
-        }
+            }
+        });
 
-            return v;
+
+        return v;
     }
 
+    public void addScore(int score){
+        score++;
+    }
+
+    public interface ReceiveTFRadioGroup{
+        public void receiveQTF(RadioGroup radioGroup);
+        public void receiveT(RadioButton radioButton);
+        public void receiveF(RadioButton radioButton);
+    }
 
 }

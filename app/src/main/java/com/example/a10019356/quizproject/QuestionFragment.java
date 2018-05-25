@@ -47,43 +47,51 @@ public class QuestionFragment extends Fragment {
         score = ((MainActivity)this.getActivity()).getScore();
         aub = ((MainActivity)this.getActivity()).getQuest();
 
-        if(aub!=10) {
-            question.setText(mcqs.get(kid).getQ());
-            a.setText(mcqs.get(kid).getA1());
-            b.setText(mcqs.get(kid).getA2());
-            c.setText(mcqs.get(kid).getA3());
-            d.setText(mcqs.get(kid).getA4());
+        question.setText(mcqs.get(kid).getQ());
+        a.setText(mcqs.get(kid).getA1());
+        b.setText(mcqs.get(kid).getA2());
+        c.setText(mcqs.get(kid).getA3());
+        d.setText(mcqs.get(kid).getA4());
 
-            answers.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
-                    if (a.isChecked()) {
-                        if (a.getText().equals(mcqs.get(kid).getS())) {
-                            score++;
-                        }
+        answers.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                if (a.isChecked()) {
+                    if (a.getText().equals(mcqs.get(kid).getS())) {
+                        score++;
                     }
-                    if (b.isChecked()) {
-                        if (b.getText().equals(mcqs.get(kid).getS())) {
-                            score++;
-                        }
-                    }
-                    if (c.isChecked()) {
-                        if (c.getText().equals(mcqs.get(kid).getS())) {
-                            score++;
-                        }
-                    }
-                    if (d.isChecked()) {
-                        if (d.getText().equals(mcqs.get(kid).getS())) {
-                            score++;
-                        }
-                    }
-
-
                 }
-            });
-        }
+                if (b.isChecked()) {
+                    if (b.getText().equals(mcqs.get(kid).getS())) {
+                        score++;
+                    }
+                }
+                if (c.isChecked()) {
+                    if (c.getText().equals(mcqs.get(kid).getS())) {
+                        score++;
+                    }
+                }
+                if (d.isChecked()) {
+                    if (d.getText().equals(mcqs.get(kid).getS())) {
+                        score++;
+                    }
+                }
+
+
+            }
+        });
 
         return v;
+
+    }
+
+    public interface ReceiveMVRadioGroup{
+        public void receiveMCQ(RadioGroup radioGroup);
+        public void receiveMCA(RadioButton radioButton);
+        public void receiveMCB(RadioButton radioButton);
+        public void receiveMCC(RadioButton radioButton);
+        public void receiveMCD(RadioButton radioButton);
+
     }
 
 
