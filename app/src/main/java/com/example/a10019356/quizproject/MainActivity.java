@@ -22,7 +22,7 @@ public class MainActivity extends FragmentActivity implements questionTrueAndFal
 
     FragmentTransaction fragmentTransaction;
     FragmentManager fragmentManager;
-    Button start, next, exit;
+    Button start, next, exit, reset;
     TextView welcome;
     ArrayList<MultipleChoice> mcqs = new ArrayList<>();
     ArrayList<TrueAndFalse> tfqs = new ArrayList<>();
@@ -58,6 +58,7 @@ public class MainActivity extends FragmentActivity implements questionTrueAndFal
         start = findViewById(R.id.id_start);
         next = findViewById(R.id.id_next);
         exit = findViewById(R.id.id_exit);
+        reset = findViewById(R.id.id_reset);
         options = getTfOptions();
         tru = getTrueOption();
         fals = getFalseOption();
@@ -77,6 +78,9 @@ public class MainActivity extends FragmentActivity implements questionTrueAndFal
             mcqs=savedInstanceState.getParcelableArrayList("mcqs");
             tfqs=savedInstanceState.getParcelableArrayList("tfqs");
         }
+
+        reset.setClickable(false);
+        reset.setVisibility(INVISIBLE);
 
         start.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -150,59 +154,7 @@ public class MainActivity extends FragmentActivity implements questionTrueAndFal
 
                     EndScreen endScreen = new EndScreen();
                     fragmentTransaction.replace(R.id.id_question, endScreen);
-                    start.setText("Restart");
 
-                    start.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            quest = 0;
-
-                            fragmentManager = getSupportFragmentManager();
-                            fragmentTransaction = fragmentManager.beginTransaction();
-
-                            fragmentTransaction.remove(fragmentManager.findFragmentById(R.id.id_question)).commit();
-
-                            EndScreen endScreen = new EndScreen();
-                            fragmentTransaction.replace(R.id.id_question, endScreen);
-
-                            for (int i = mcqs.size() - 1; i > 0; i--) {
-                                mcqs.remove(i);
-                            }
-                            for (int i = tfqs.size() - 1; i > 0; i--) {
-                                tfqs.remove(i);
-                            }
-
-                            kid=0;
-                            tfcount=0;
-                            score = 0;
-
-                            next.setVisibility(VISIBLE);
-                            start.setVisibility(INVISIBLE);
-                            next.setClickable(true);
-                            start.setClickable(false);
-
-                            fragmentManager = getSupportFragmentManager();
-                            fragmentTransaction = fragmentManager.beginTransaction();
-
-                            makeMCQuestion();
-                            makeTFQuestion();
-
-                            if (qt == 1) {
-                                QuestionFragment questionFragment = new QuestionFragment();
-                                fragmentTransaction.replace(R.id.id_question, questionFragment);
-                                kid++;
-                                quest++;
-                            } else {
-                                questionTrueAndFalse questionTrueAndFalse = new questionTrueAndFalse();
-                                fragmentTransaction.replace(R.id.id_question, questionTrueAndFalse);
-                                tfcount++;
-                                quest++;
-                            }
-
-
-                        }
-                    });
 
                     next.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -215,7 +167,8 @@ public class MainActivity extends FragmentActivity implements questionTrueAndFal
                             fragmentTransaction.replace(R.id.id_question, endScreen);
 
                             next.setVisibility(INVISIBLE);
-                            start.setVisibility(VISIBLE);
+                            reset.setClickable(true);
+                            reset.setVisibility(VISIBLE);
 
 
                         }
@@ -227,6 +180,59 @@ public class MainActivity extends FragmentActivity implements questionTrueAndFal
             }
         });
 
+        reset.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                quest = 0;
+
+                fragmentManager = getSupportFragmentManager();
+                fragmentTransaction = fragmentManager.beginTransaction();
+
+                fragmentTransaction.remove(fragmentManager.findFragmentById(R.id.id_question)).commit();
+
+                EndScreen endScreen = new EndScreen();
+                fragmentTransaction.replace(R.id.id_question, endScreen);
+
+                for (int i = mcqs.size() - 1; i > 0; i--) {
+                    mcqs.remove(i);
+                }
+                for (int i = tfqs.size() - 1; i > 0; i--) {
+                    tfqs.remove(i);
+                }
+
+                kid=0;
+                tfcount=0;
+                score = 0;
+
+                next.setVisibility(VISIBLE);
+                start.setVisibility(INVISIBLE);
+                next.setClickable(true);
+                start.setClickable(false);
+                reset.setClickable(false);
+                reset.setVisibility(INVISIBLE);
+
+                fragmentManager = getSupportFragmentManager();
+                fragmentTransaction = fragmentManager.beginTransaction();
+
+                makeMCQuestion();
+                makeTFQuestion();
+
+                if (qt == 1) {
+                    QuestionFragment questionFragment = new QuestionFragment();
+                    fragmentTransaction.replace(R.id.id_question, questionFragment);
+                    kid++;
+                    quest++;
+                } else {
+                    questionTrueAndFalse questionTrueAndFalse = new questionTrueAndFalse();
+                    fragmentTransaction.replace(R.id.id_question, questionTrueAndFalse);
+                    tfcount++;
+                    quest++;
+                }
+
+
+            }
+        });
 
 
         exit.setOnClickListener(new View.OnClickListener() {
